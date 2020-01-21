@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel=stylesheet type="text/css" href="/static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        // make sure the page is fully loaded
+        var data;
+        $(document).ready(function(){
+
+            $("#content").on("input", function(){
+
+                if ($("#content").text().replace(/\n/g, "").replace(/ /g, "") !== "")
+                {
+                    $("#post_article").prop("disabled", false);
+                }
+                else
+                {
+                    $("#post_article").prop("disabled", true);
+                }
+            });
+            $("#post_article").click(function(){
+                let friend_tag = [];
+                $("input.friend").each(function(){
+                    friend_tag.push($(this).val());
+                });
+                //alert(friend_tag);
+                let position_tag = [];
+                $("input.position").each(function(){
+                    position_tag.push($(this).val());
+
+                });
+                //alert(position_tag);
+                let form = $("#add_article_form")[0];
+                let action = $("#add_article_form").attr('action');
+                data = new FormData(form);
+                friend_tag.forEach(function(value){
+                    data.append('friend_tag', value);
+                });
+                position_tag.forEach(function(value){
+                    data.append('position_tag', value);
+                });
+                data.append("content", $("#content").text());
+                data.append("parent_ID", "");
+                data.append("root_article_ID", "");
+                console.log(data);
+                let request = $.ajax({
+                   type: "POST",
+                   url: action,
+                   data: data,
+                   cache: false,
+                   processData: false,
+                   contentType: false
+                });
+                request.done(function(html)
+                {
+                    $("p#if_empty").remove();
+                    $("#article_list").append(html);
+                    $.get("{% url 'new_article_received'%}")
+                    .done(function(html){
+                        $("#add_article").html(html);
+                    });
+                });
+                request.fail(function(jqXHR, textStatus)
+                {
+                    console.log(textStatus);
+                });
+            });
+
+            $(".append.friend").click(function(){
+                $("div.friend").append('<li><input class="friend tag" type="text"></li>');
+
+            });
+            $(".append.position").click(function(){
+                $("div.position").append('<li><input class="position tag" type="text"></li>');
+
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="add_article">
+        <form method="post" action="{% url 'send_new_article' %}" enctype="multipart/form-data" id="add_article_form">
+            {% csrf_token %}
+            <ul>
+                <li><div id="content" contenteditable="plaintext-only" class="article_content"></div></li>
+                <li><input id="upload_image" type="file" accept="image/*" name="image" multiple></li>
+                <li>標註好友：</li>
+                <div class="friend">
+                    <li>
+                        <input class="friend tag" type="text">
+                        <button type="button" class="friend tag append">增加</button>
+                    </li>
+                </div>
+                <li>標註地點：</li>
+                <div class="position">
+                    <li>
+                        <input class="position tag" type="text">
+                        <button type="button" class="position tag append">增加</button>
+                    </li>
+                </div>
+                <li><button type="button" value="SEND" class="post_article" id="post_article" disabled>傳送</button></li>
+
+            </ul>
+        </form>
+    </div>
+</body>
+</html>

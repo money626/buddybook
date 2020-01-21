@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>First Login</title>
+    </head>
+    <body>
+        <form action="{% url 'set_data' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            使用者名稱：<input type="text" name="user_name" required><br>
+            簡介：<input type="text" name="profile_context"><br>
+            上傳頭貼：<input type="file" name="profile_picture" accept="image/*" required><br>
+            上傳背景圖：<input type="file" name="background_picture" accept="image/*" required><br>
+            <input type="text" name="type" value="update_personal_data" hidden>
+            <input type="submit" value="確認">
+        </form>
+    </body>
+</html>

@@ -1,0 +1,5 @@
+<form action="{% url 'send_add_friend' %}" method="post">
+    {% csrf_token %}
+    <input name="ip_address" type="text" pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])" required>
+    <input type="submit" value="送出">
+</form>

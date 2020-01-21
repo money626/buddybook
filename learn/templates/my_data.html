@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel='stylesheet' href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="full">
+        <table class="user_info">
+            <tr class="image">
+                <td>
+                  <div class="user_img">
+                    <p class="user_name">{{ data.user_name }}</p>
+                    <div class="background_cover"></div>
+                    <a href="{% url 'first_login' %}" class="set_data_link">編輯個人檔案</a>
+                    <img src='/buddybook/media/{{ data.background_picture }}' alt="Background" class="background">
+                    <img src='/buddybook/media/{{ data.profile_picture }}' alt="profile_picture" class="profile_picture">
+
+                  </div>
+                </td>
+            </tr>
+            <tr class="profile_context">
+              <td>
+                <div style="margin: 10px;">{{ data.profile_context }}</div>
+              </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

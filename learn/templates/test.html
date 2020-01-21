@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>POST TEST</title>
+    </head>
+    <body>
+        <form action="test" method="post" target="hiddenFrame">
+            {% csrf_token %}
+            <input type="text" name="test">
+            <input type="submit" value="submit">
+
+        </form>
+        <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+
+    </body>
+</html>
