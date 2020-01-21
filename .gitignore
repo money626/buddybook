@@ -131,3 +131,4 @@ dmypy.json
 #datas
 jsons/
 images/
+P2P/local_settings.py
