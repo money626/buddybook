@@ -1,0 +1,42 @@
+{% load test %}
+<table id="{{article.article_ID}}">
+    <tr>
+        <td rowspan="2"><img src="/buddybook/media/{{article.img}}" class="article_profile_picture"></td>
+        <td>{{article.user_name}}</td>
+        <td colspan="3"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{{article.latest_edit_time|date}}</td>
+        <td colspan="3"></td>
+        <td></td>
+    </tr>
+    <tr class="contents">
+        <td colspan="6" >{{article.content}}</td>
+    </tr>
+    <tr>
+        {% if my_id in article.like_list %}
+            <td colspan="3" class="liked">like</td>
+        {% else %}
+            <td colspan="3" class="like" onclick="like('{{article.article_ID}}')">like</td>
+        {% endif %}
+        <td colspan="3" class="make_comment">Comment</td>
+    </tr>
+    <tr class="comments">
+        <td colspan="6">
+            <ul>
+                <li></li>
+                <li>{% include "comment.html" %}</li>
+                <li>
+                    <ul>
+                        <li>{% include "comment.html" %}</li>
+                        <li>{% include "comment.html" %}</li>
+                        <li>test1</li>
+                    </ul>
+                </li>
+                <li>test</li>
+                <li>test</li>
+            </ul>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,44 @@
+{% load test %}
+<table id="{{article.article_ID}}" class="article">
+    <tr>
+        <td rowspan="2"><img src="/buddybook/media/{{article.img}}" class="article_profile_picture"></td>
+        <td>{{article.user_name}}</td>
+        <td colspan="3"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>{{article.latest_edit_time|date}}</td>
+        <td colspan="3"></td>
+        <td></td>
+    </tr>
+    <tr class="contents">
+        <td colspan="6" >{{article.content}}</td>
+    </tr>
+    {% for image in article.image_content %}
+        <tr class="images">
+           <td colspan="6">
+               <img src="/buddybook/media/{{image}}"></div>
+           </td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3"><a href="/buddybook/like_list/{{article.article_ID}}">{{article.like_list|length}}people liked</a></td>
+        <td colspan="3">{{article.comment_list|length}}comments</td>
+    </tr>
+    <tr>
+        {% if my_id in article.like_list %}
+            <td colspan="3" class="liked {{article.article_ID}}">like</td>
+        {% else %}
+            <td colspan="3" class="like {{article.article_ID}}" onclick="like('{{article.article_ID}}')">like</td>
+        {% endif %}
+        <td colspan="3" class="make_comment" onclick="comment('{{article.article_ID}}')">Comment</td>
+    </tr>
+    <tr class="comments">
+        <td colspan="6">
+            <ul class="{{article.article_ID}}" style="display: none;">
+                <li>{% include "add_comment.html" with id=article.article_ID %}</li>
+                {{ article.comment_list|comments }}
+            </ul>
+        </td>
+    </tr>
+</table>

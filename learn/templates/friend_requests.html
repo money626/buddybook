@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel=stylesheet type="text/css" href="{% static 'style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            if ($(".response").length === 0)
+            {
+                $("body").append("<div><table><tr><td rowspan='2'>No more friend requests!</td></tr></table></div>");
+            }
+            $(".response>td").click(function(){
+                const ID = $(this).parents("div").attr("id");
+                let response;
+                if ($(this).attr('class') == 'accept')
+                {
+                    response = true;
+                }
+                else
+                {
+                    response = false;
+                }
+                $("#"+ID).remove();
+                if ($(".response").length === 0)
+                {
+                    $("body").append("<div><table><tr><td rowspan='2'>No more friend requests!</td></tr></table></div>");
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'send_add_friend_reply'%}",
+                    data:
+                    {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            data:JSON.stringify(
+                                {
+                                    "header": "add_friend_reply",
+                                    "body":
+                                    {
+                                        "response" : response
+                                    },
+                                    "ID": ID
+                                 }
+                            )
+
+                    },
+                    dataType: "json"
+                });
+
+            });
+        });
+    </script>
+</head>
+<body>
+    {% for request in request_list %}
+        <div class="friend_request" id="{{request.selfs_ID}}">
+            <table>
+                <tr>
+                    <td colspan="2" rowspan="2"><img src="/buddybook/media/{{request.profile_picture}}"></td>
+                    <td colspan="2">{{request.user_name}}</td>
+                </tr>
+                <tr class="response">
+                    <td class="accept">accept</td>
+                    <td class="refuse">refuse</td>
+                </tr>
+                <tr>
+                    <td colspan="4">{{request.profile_context}}</td>
+                </tr>
+
+            </table>
+
+        </div>
+    {% endfor %}
+</body>
+</html>

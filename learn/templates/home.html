@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel=stylesheet type="text/css" href="/static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function send_comment(article_id)
+        {
+            const comment=$("input."+article_id).val();
+            const parent_id=$("input."+article_id).attr('class');
+            if (comment === "")
+            {
+                return;
+            }
+            $("."+article_id).val("");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'send_new_article' %}",
+                data:
+                {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    content: comment,
+                    root_article_ID: $("."+article_id).parents(".article").attr('id'),
+                    parent_ID: parent_id
+                }
+            })
+            .done(function(new_id){
+                console.log(new_id);
+
+                $("ul."+parent_id).append('<li><div class="comment"><table><tbody><tr><td><img src="/buddybook/media/{{my_picture}}"></td><td colspan="4">{{my_name}}</td><td></td></tr><tr><td colspan="6" class="contents">'+comment+'</td></tr><tr><td colspan="3" class="like '+new_id+'" onclick="like(\''+new_id+'\')">like</td><td colspan="3" class="make_comment" onclick="comment(\''+new_id+'\')">Comment</td></tr></tbody></table></div></li>');
+                $("ul."+parent_id).append('<li><ul class="'+new_id+'" style="display: none;"><li><div class="add_comment"><table><tbody><tr><td colspan="6"><input type="text" class="'+new_id+'"></td><td class="send_comment" onclick="send_comment(\''+new_id+'\')">Send</td></tr></tbody></table></div></li></li></ul>');
+
+            });
+
+        }
+        function comment(article_id)
+        {
+            if ( $("ul."+article_id).css("display") === "none" )
+            {
+                $("ul."+article_id).fadeIn(400);
+            }
+            else
+            {
+                $("ul."+article_id).fadeOut(400);
+            }
+        }
+        function like(article_id)
+        {
+            $.ajax({
+                type: "POST",
+                url: "/buddybook/send_like/"+article_id+"/",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+            });
+            $(".like."+article_id).removeClass('like').addClass('liked').removeAttr("onclick");
+        }
+
+        $(".liked").removeAttr("onclick");
+        /*
+        $(document).ready(function(){
+            $connection=get_new_article();
+            if ($connection)
+            {
+                setInterval(function(){ get_new_article(); }, 2000);
+            }
+        });
+        */
+        function get_new_article()
+        {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'update_articles' %}",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+            })
+            .done(function(msg){
+                console.log(msg.test);
+            })
+            .fail(function(error){
+                console.log(error);
+            });
+
+            return true;
+        }
+
+
+    </script>
+</head>
+<body>
+    <div class="header">testy</div>
+    <div class="full">
+
+        <div class="article" id="article_list">
+            <div id="add_article">{% include "add_article.html" %}</div>
+            {% for article in articles %}
+                {% include "article.html" with article=article %}
+            {% empty %}
+                <p id="if_empty">目前尚無貼文</p>
+            {% endfor %}
+
+        </div>
+        <div class="online_list"></div>
+    </div>
+</body>
+</html>
